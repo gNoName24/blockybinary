@@ -12,6 +12,7 @@
 
 // Сторонние библиотеки
 #include <xxhash.h> // https://github.com/Cyan4973/xxHash
+#include <miniz/miniz.h> // https://github.com/richgel999/miniz
 
 namespace NoName24 {
     namespace BlockyBinary {
@@ -31,17 +32,22 @@ namespace NoName24 {
 
         struct BlockBaseSettings {
             // 1
-            uint32_t block_number{};
+            uint32_t block_number;
 
             // 2
-            uint8_t compression_type{};
+            uint8_t compression_type;
 
-            // 3
+            // 3 - Deflate
+            uint8_t compression_type_1_level = 1;
 
             // 4
-            uint8_t xxh3_bit{};
+            uint8_t xxh3_bit;
 
             std::vector<uint8_t> dump();
+
+            BlockBaseSettings(uint32_t block_number, uint8_t compression_type, uint8_t xxh3_bit):
+                block_number(block_number), compression_type(compression_type), xxh3_bit(xxh3_bit)
+            {}
         };
         struct Block {
             BlockBaseSettings base_settings; // обязательные настройки

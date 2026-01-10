@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
-project(blockybinary VERSION 1.0.0 LANGUAGES CXX)
+project(blockybinary VERSION 1.0.0 LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -23,6 +23,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(xxhash)
 
+# Miniz (https://github.com/richgel999/miniz)
+project_message(STATUS "Miniz - https://github.com/richgel999/miniz")
+project_message(STATUS "Miniz включен в этот проект")
+add_library(miniz STATIC third_party/miniz/miniz.c)
+target_include_directories(miniz PUBLIC third_party/miniz)
+
 project_message(STATUS "Collecting all .cpp files into blockybinary_sources")
 file(GLOB_RECURSE blockybinary_sources "src/noname24/blockybinary/*.cpp")
 
@@ -34,6 +40,7 @@ target_include_directories(blockybinary PRIVATE
     include
 )
 target_link_libraries(blockybinary PRIVATE
+    miniz
     xxhash
 )
 

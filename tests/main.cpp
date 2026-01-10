@@ -10,19 +10,20 @@ std::string filename = "test.bin";
 int main(int argc, char **argv) {
     std::ofstream file(filename, std::ios::binary);
 
-    BlockyBinary::BlockBaseSettings blocksettings(0, 0, 0);
+    BlockyBinary::BlockBaseSettings blocksettings(0, 1, 1);
     BlockyBinary::Block mainblock(blocksettings, "testingblock");
     mainblock.data_main = std::vector<uint8_t>(
-        std::string_view("hello block").begin(),
-        std::string_view("hello block").end()
+        std::string_view("adwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdf").begin(),
+        std::string_view("adwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdfadawdawddwadwawawdawdawdawdadwdawdawdasdf").end()
     );
     mainblock.base_settings.block_number = 1;
 
     BlockyBinary::Block babyblock(blocksettings, "babyblock");
     babyblock.data_main = std::vector<uint8_t>(
-        std::string_view("this is baby block").begin(),
-        std::string_view("this is baby block").end()
+        std::string_view("this is baby blockthis is baby blockthis is baby blockthis is baby block").begin(),
+        std::string_view("this is baby blockthis is baby blockthis is baby blockthis is baby block").end()
     );
+    babyblock.base_settings.compression_type_1_level = 0;
 
     mainblock.data_blocks.push_back(babyblock);
 

@@ -4,6 +4,9 @@
 #include <noname24/blockybinary.hpp>
 #include <noname24/blockybinary/inthelper.hpp>
 
+#include <stdexcept> // std::runtime_error
+#include <print>
+
 namespace NoName24 {
     namespace BlockyBinary {
         // struct BlockBaseSettings
@@ -74,10 +77,18 @@ namespace NoName24 {
             }
             data.insert(data.end(), data_main.begin(), data_main.end());
 
-            switch(base_settings.compression_type) {
-                case 1: // Deflate
-                    break;
-                default: break;
+            if(base_settings.compression_type == 1) { // Deflate
+                //std::print("compression");
+                std::vector<uint8_t> compressed(compressBound(data.size()));
+                mz_ulong compressed_len = compressed.size();
+                int res = mz_compress2(compressed.data(), &compressed_len,
+                                      data.data(), data.size(), base_settings.compression_type_1_level);
+                if(res != MZ_OK) {
+                    throw std::runtime_error("Deflate compress failed");
+                }
+                compressed.resize(compressed_len);
+                std::print("{} - до: {} байт, после: {} байт\n", name, data.size(), compressed.size());
+                data = std::move(compressed);
             }
 
             uint64_t data_size = data.size();
