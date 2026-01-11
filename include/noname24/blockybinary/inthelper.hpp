@@ -6,10 +6,14 @@
 
 #include <cstdint> // u/intX_t
 #include <vector> // std::vector
+#include <string> // std::string
 
 namespace NoName24 {
     namespace BlockyBinary {
         namespace IntHelper {
+            // uintX_to_hex
+            std::string uint64_to_hex(uint64_t v);
+
             // uintX_to_uvec8
             std::vector<uint8_t> uint16_to_uvec8(uint16_t v);
             std::vector<uint8_t> uint32_to_uvec8(uint32_t v);

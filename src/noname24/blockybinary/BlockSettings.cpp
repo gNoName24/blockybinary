@@ -18,7 +18,7 @@ namespace NoName24 {
         }
 
         uint64_t BlockSettings::parse(std::span<const uint8_t> data) {
-            uint64_t byte_shift = 0; // сдвиг
+            size_t byte_shift = 0; // сдвиг
 
             std::span<const uint8_t> block_number_span = data.subspan(byte_shift, 4);
             block_number = IntHelper::uvec8_to_uint32(
@@ -62,9 +62,10 @@ namespace NoName24 {
             return ret;
         }
 
+#if NONAME24_BLOCKYBINARY_ENABLE_PRINT
         void BlockSettings::print(int tab) {
             tab += 4;
-            std::print("{}base_settings:\n", std::string(tab, ' '));
+            std::print("{}settings:\n", std::string(tab, ' '));
             std::print("{}    block_number: {}\n", std::string(tab, ' '), block_number);
             std::print("{}    compression_type: {}\n", std::string(tab, ' '), compression_type);
             if(compression_type == 1) {
@@ -74,5 +75,6 @@ namespace NoName24 {
             }
             std::print("{}    xxh3_bit: {}\n", std::string(tab, ' '), xxh3_bit);
         }
+#endif
     };
 };

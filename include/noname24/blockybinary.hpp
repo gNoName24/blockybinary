@@ -1,6 +1,15 @@
 /* ./include/noname24/blockybinary.hpp
  * NoName24 - 2026
  */
+
+/* Доступные макросы:
+ * NONAME24_BLOCKYBINARY_ENABLE_PRINT - Включает <print> и функции, связанные с ним (требуется C++23)
+ */
+
+#ifndef NONAME24_BLOCKYBINARY_ENABLE_PRINT
+    #define NONAME24_BLOCKYBINARY_ENABLE_PRINT 0
+#endif
+
 #ifndef NONAME24_BLOCKYBINARY_HPP
 #define NONAME24_BLOCKYBINARY_HPP
 
@@ -29,6 +38,9 @@ namespace NoName24 {
  *      ?3. Настройки для Deflate (ТОЛЬКО ЕСЛИ ТИП СЖАТИЯ - 1)
  *      4. Сколько битов использовать для xxh3 (0 - 64 / 1 - 128) (uint8_t)
  */
+
+        constexpr size_t XXH64_SIZE = 8;
+        constexpr size_t XXH128_SIZE = 16;
 
         struct BlockSettings_Deflate {
             static constexpr uint8_t MAX_SIZE_BYTE = 1 + 8;
@@ -60,7 +72,9 @@ namespace NoName24 {
             uint64_t parse(std::span<const uint8_t> data);
             std::vector<uint8_t> dump();
 
+#if NONAME24_BLOCKYBINARY_ENABLE_PRINT
             void print(int tab);
+#endif
 
             BlockSettings() {}
         };
@@ -81,7 +95,9 @@ namespace NoName24 {
             void parse(std::span<const uint8_t> data);
             std::vector<uint8_t> dump();
 
+#if NONAME24_BLOCKYBINARY_ENABLE_PRINT
             void print(int tab);
+#endif
 
             Block() {}
             Block(BlockSettings settings): settings(settings) {}

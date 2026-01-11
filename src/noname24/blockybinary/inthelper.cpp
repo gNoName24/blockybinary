@@ -4,10 +4,24 @@
 #include <noname24/blockybinary/inthelper.hpp>
 
 #include <stdexcept> // std::runtime_error
+#include <sstream> // std::stringstream
+#include <iomanip>
 
 namespace NoName24 {
     namespace BlockyBinary {
         namespace IntHelper {
+            // uintX_to_hex
+            std::string uint64_to_hex(uint64_t v) {
+                std::stringstream ss;
+                ss << std::hex << std::uppercase << std::setfill('0');
+
+                for(int i = 0; i < 8; ++i) {
+                    ss << std::setw(2) << ((v >> (i * 8)) & 0xFF);
+                }
+
+                return ss.str();
+            }
+
             // uintX_to_uvec8
             std::vector<uint8_t> uint16_to_uvec8(uint16_t v) {
                 return {

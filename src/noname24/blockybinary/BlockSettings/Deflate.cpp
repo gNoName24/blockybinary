@@ -8,7 +8,7 @@ namespace NoName24 {
     namespace BlockyBinary {
         // struct BlockBaseSettings_Deflate
         size_t BlockSettings_Deflate::parse(std::span<const uint8_t> data) {
-            uint64_t byte_shift = 0; // сдвиг
+            size_t byte_shift = 0; // сдвиг
 
             // level
             level = data[byte_shift];
