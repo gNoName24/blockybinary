@@ -19,39 +19,54 @@ namespace NoName24 {
 /*  - Задумка блоков
  *  Блок состоит из частей, который делится лишь смещениями
  *  Сдвиги побайтовые, битовый сдвиги не используются
- *  [обязательные настройки] [название - uint16_t] [название] [данные - uint64_t] [данные] [xxh3 (все предыдущие блоки вместе взятые)]
+ *  [размер блока - uint64_t] [настройки] [название - uint16_t] [название] [данные - uint64_t] [данные] [xxh3 (все предыдущие блоки вместе взятые)]
  *
- *  [обязательные настройки] содержит в себе:
+ *  [настройки] содержит в себе:
  *      1. Количество вложенных блоков, помещенные в данные ПЕРЕД сырыми байтами (uint32_t)
  *      2. Какой тип сжатия данных использовать (uint8_t)
  *             0 - Не использовать сжатие
  *             1 - Deflate (https://github.com/richgel999/miniz)
- *      3. Настройки для Deflate (обязательно для указания если тип сжатия данных - 1)
+ *      ?3. Настройки для Deflate (ТОЛЬКО ЕСЛИ ТИП СЖАТИЯ - 1)
  *      4. Сколько битов использовать для xxh3 (0 - 64 / 1 - 128) (uint8_t)
  */
 
-        struct BlockBaseSettings {
+        struct BlockSettings_Deflate {
+            static constexpr uint8_t MAX_SIZE_BYTE = 1 + 8;
+
+            uint8_t level = 6;
+            uint64_t expected_size;
+
+            size_t parse(std::span<const uint8_t> data);
+            std::vector<uint8_t> dump();
+        };
+        struct BlockSettings {
+            static constexpr uint8_t MAX_SIZE_BYTE = 4 + 1 + BlockSettings_Deflate::MAX_SIZE_BYTE + 1;
+
             // 1
-            uint32_t block_number;
+            bool block_number_auto = true;
+            uint32_t block_number = 0;
 
             // 2
-            uint8_t compression_type;
+            uint8_t compression_type = 0;
 
-            // 3 - Deflate
-            uint8_t compression_type_1_level = 1;
+            // ?3 - Deflate
+            BlockSettings_Deflate compression_type_1;
 
             // 4
-            uint8_t xxh3_bit;
+            uint8_t xxh3_bit = 0;
 
+            size_t get_selfsize();
+
+            uint64_t parse(std::span<const uint8_t> data);
             std::vector<uint8_t> dump();
 
-            BlockBaseSettings(uint32_t block_number, uint8_t compression_type, uint8_t xxh3_bit):
-                block_number(block_number), compression_type(compression_type), xxh3_bit(xxh3_bit)
-            {}
+            void print(int tab);
+
+            BlockSettings() {}
         };
         struct Block {
-            BlockBaseSettings base_settings; // обязательные настройки
-            std::string name; // название
+            BlockSettings settings; // обязательные настройки
+            std::string name = "UNKNOWN"; // название
 
             // данные
             std::vector<Block> data_blocks; // на основе block_number в base_settings
@@ -62,11 +77,15 @@ namespace NoName24 {
             XXH128_hash_t xxh128;
 
             size_t get_selfsize();
+
             void parse(std::span<const uint8_t> data);
             std::vector<uint8_t> dump();
 
-            Block(BlockBaseSettings base_settings, std::string name): base_settings(base_settings), name(name)
-            {}
+            void print(int tab);
+
+            Block() {}
+            Block(BlockSettings settings): settings(settings) {}
+            Block(BlockSettings settings, std::string name): settings(settings), name(name) {}
         };
     };
 };

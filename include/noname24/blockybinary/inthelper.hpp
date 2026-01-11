@@ -10,15 +10,15 @@
 namespace NoName24 {
     namespace BlockyBinary {
         namespace IntHelper {
-            // intX_to_vec8
-            std::vector<int8_t> int16_to_vec8(int16_t v);
-            std::vector<int8_t> int32_to_vec8(int32_t v);
-            std::vector<int8_t> int64_to_vec8(int64_t v);
+            // uintX_to_uvec8
+            std::vector<uint8_t> uint16_to_uvec8(uint16_t v);
+            std::vector<uint8_t> uint32_to_uvec8(uint32_t v);
+            std::vector<uint8_t> uint64_to_uvec8(uint64_t v);
 
-            // intX_to_uvec8
-            std::vector<uint8_t> int16_to_uvec8(int16_t v);
-            std::vector<uint8_t> int32_to_uvec8(int32_t v);
-            std::vector<uint8_t> int64_to_uvec8(int64_t v);
+            // uvec8_to_uintX
+            uint16_t uvec8_to_uint16(const std::vector<uint8_t>& v);
+            uint32_t uvec8_to_uint32(const std::vector<uint8_t>& v);
+            uint64_t uvec8_to_uint64(const std::vector<uint8_t>& v);
         };
     };
 };
