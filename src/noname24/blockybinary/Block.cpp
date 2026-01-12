@@ -17,6 +17,11 @@ namespace NoName24 {
             return selfsize;
         }
 
+        void Block::add_block(Block& block) {
+            data_blocks_indexed[block.name] = data_blocks.size();
+            data_blocks.push_back(block);
+        }
+
         void Block::parse(std::span<const uint8_t> data) {
             size_t byte_shift = 0; // сдвиг
 
@@ -83,7 +88,7 @@ namespace NoName24 {
                 Block data_blocks_block;
                 data_blocks_block.parse(data_blocks_block_data);
 
-                data_blocks.push_back(data_blocks_block);
+                add_block(data_blocks_block);
 
                 byte_shift_2 += data_blocks_block_size;
                 data_size_uncompressed -= data_blocks_block_size;

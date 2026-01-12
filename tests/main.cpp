@@ -24,7 +24,7 @@ void dump_recurs(BlockyBinary::BlockSettings& blocksettings, BlockyBinary::Block
 
     dump_recurs(blocksettings, recursblock, data_main, step, max_step);
 
-    block.data_blocks.push_back(recursblock);
+    block.add_block(recursblock);
 }
 
 void dump() {

@@ -19,6 +19,7 @@
 #include <vector> // std::vector
 #include <span> // std::span
 #include <memory> // std::X_ptr
+#include <unordered_map> // std::unordered_map
 
 // Сторонние библиотеки
 #include <xxhash.h> // https://github.com/Cyan4973/xxHash
@@ -85,6 +86,7 @@ namespace NoName24 {
 
             // данные
             std::vector<Block> data_blocks; // на основе block_number в base_settings
+            std::unordered_map<std::string, size_t> data_blocks_indexed;
             std::vector<uint8_t> data_main; // всё что после data_blocks в упакованных данных
 
             // xxh3
@@ -92,6 +94,8 @@ namespace NoName24 {
             XXH128_hash_t xxh128;
 
             size_t get_selfsize();
+
+            void add_block(Block& block);
 
             void parse(std::span<const uint8_t> data);
             std::vector<uint8_t> dump();

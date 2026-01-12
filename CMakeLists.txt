@@ -7,6 +7,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 
+option(USE_TESTS "Enable tests" ON)
+option(USE_DEMOS "Enable demos" ON)
+
 function(project_message msg_type msg_text)
     message(${msg_type} "[blockybinary] ${msg_text}")
 endfunction()
@@ -36,7 +39,7 @@ add_library(blockybinary
     src/noname24/blockybinary.cpp
     ${blockybinary_sources}
 )
-target_include_directories(blockybinary PRIVATE
+target_include_directories(blockybinary PUBLIC
     include
 )
 target_link_libraries(blockybinary PRIVATE
@@ -48,10 +51,19 @@ target_link_libraries(blockybinary PRIVATE
 add_definitions(-DNONAME24_BLOCKYBINARY_ENABLE_PRINT=1)
 
 # Тесты
-enable_testing()
+if(USE_TESTS)
+    project_message(STATUS "Tests enable")
+    enable_testing()
 
-add_executable(blockybinary_test tests/main.cpp)
-target_include_directories(blockybinary_test PRIVATE include)
-target_link_libraries(blockybinary_test PRIVATE blockybinary)
+    add_executable(blockybinary_test tests/main.cpp)
+    target_include_directories(blockybinary_test PRIVATE include)
+    target_link_libraries(blockybinary_test PRIVATE blockybinary)
 
-add_test(NAME blockybinarytests COMMAND blockybinary_test)
+    add_test(NAME blockybinarytests COMMAND blockybinary_test)
+endif()
+
+# Примеры
+if(USE_DEMOS)
+    project_message(STATUS "Demos enable")
+    add_subdirectory(demos/blockyarchiver)
+endif()
