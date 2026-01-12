@@ -4,14 +4,15 @@
 
 /* Доступные макросы:
  * NONAME24_BLOCKYBINARY_ENABLE_PRINT - Включает <print> и функции, связанные с ним (требуется C++23)
+ *      Включение: add_definitions(-DNONAME24_BLOCKYBINARY_ENABLE_PRINT=1)
  */
+
+#ifndef NONAME24_BLOCKYBINARY_HPP
+#define NONAME24_BLOCKYBINARY_HPP
 
 #ifndef NONAME24_BLOCKYBINARY_ENABLE_PRINT
     #define NONAME24_BLOCKYBINARY_ENABLE_PRINT 0
 #endif
-
-#ifndef NONAME24_BLOCKYBINARY_HPP
-#define NONAME24_BLOCKYBINARY_HPP
 
 #include <cstdint> // u/intX_t
 #include <string> // std::string

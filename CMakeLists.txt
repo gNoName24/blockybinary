@@ -44,6 +44,9 @@ target_link_libraries(blockybinary PRIVATE
     xxhash
 )
 
+# Макросы
+add_definitions(-DNONAME24_BLOCKYBINARY_ENABLE_PRINT=1)
+
 # Тесты
 enable_testing()
 

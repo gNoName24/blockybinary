@@ -1,3 +1,5 @@
+#define NONAME24_BLOCKYBINARY_ENABLE_PRINT 1
+
 #include <noname24/blockybinary.hpp>
 
 #include <string> // std::string
@@ -40,16 +42,18 @@ void dump() {
     blocksettings.compression_type_1.level = 9;
     blocksettings.xxh3_bit = 1;
     BlockyBinary::Block mainblock(blocksettings, "mainblock");
-    //mainblock.settings.compression_type = 1;
+    mainblock.settings.compression_type = 1;
     mainblock.data_main = std::vector<uint8_t>(data_main.begin(), data_main.end());
 
-    int step = 0;
-    dump_recurs(blocksettings, mainblock, data_main, step, 32);
+    for(int i = 0; i < 4; i++) {
+        int step = 0;
+        dump_recurs(blocksettings, mainblock, data_main, step, 4);
+    }
 
     std::vector<unsigned char> mainblock_dump = mainblock.dump();
     file.write(reinterpret_cast<const char*>(mainblock_dump.data()), mainblock_dump.size());
 
-    //mainblock.print(0);
+    mainblock.print(0);
 
     file.close();
 }
@@ -63,7 +67,7 @@ void parse() {
     std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     mainblock.parse(buffer);
 
-    //mainblock.print(0);
+    mainblock.print(0);
 
     file.close();
 }
