@@ -14,6 +14,10 @@ namespace NoName24 {
             pack(file_path, pack_paths, settings);
         }
         void pack(std::filesystem::path file_path, std::span<std::filesystem::path> pack_paths, BlockyBinary::BlockSettings& block_settings) {
+            if(file_path.extension() != standart_file_extension) {
+                std::cout << "Рекомендуется использовать разрешение " << standart_file_extension << std::endl;
+            }
+
             BlockyBinary::Block block_archive(block_settings, "root");
             for(int i = 0; i < pack_paths.size(); i++) {
                 BlockyBinary::Block block_next = pack_block(pack_paths[i], block_settings);

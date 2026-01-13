@@ -12,6 +12,8 @@ namespace BlockyBinary = NoName24::BlockyBinary;
 
 namespace NoName24 {
     namespace BlockyArchiver {
+        constexpr std::string standart_file_extension = ".barc";
+
         void pack(std::filesystem::path file_path, std::span<std::filesystem::path> pack_paths);
         void pack(std::filesystem::path file_path, std::span<std::filesystem::path> pack_paths, BlockyBinary::BlockSettings& block_settings);
         BlockyBinary::Block pack_block(std::filesystem::path pack_path, BlockyBinary::BlockSettings& block_settings);

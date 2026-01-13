@@ -9,7 +9,7 @@
 
 namespace BlockyBinary = NoName24::BlockyBinary;
 
-std::string filename = "test.bin";
+std::string filename = "test.braw";
 
 void dump_recurs(BlockyBinary::BlockSettings& blocksettings, BlockyBinary::Block& block, std::string& data_main, int& step, int max_step) {
     step++;
@@ -53,7 +53,7 @@ void dump() {
     std::vector<unsigned char> mainblock_dump = mainblock.dump();
     file.write(reinterpret_cast<const char*>(mainblock_dump.data()), mainblock_dump.size());
 
-    mainblock.print(0);
+    // mainblock.print(0);
 
     file.close();
 }
@@ -67,7 +67,7 @@ void parse() {
     std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     mainblock.parse(buffer);
 
-    mainblock.print(0);
+    // mainblock.print(0);
 
     file.close();
 }

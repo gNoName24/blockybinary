@@ -58,19 +58,8 @@ namespace NoName24 {
             std::vector<uint8_t> data_uncompressed_storage;
             std::span<const uint8_t> data_uncompressed;
             if(settings.compression_type == 1) {
-                BlockSettings_Deflate& settings_deflate = settings.compression_type_1;
-                data_uncompressed_storage.resize(settings_deflate.expected_size);
-                mz_ulong dest_len = settings_deflate.expected_size;
-                int status = mz_uncompress(
-                    data_uncompressed_storage.data(),
-                    &dest_len,
-                    data_compressed.data(),
-                    data_compressed.size()
-                );
-                if(status != MZ_OK) {
-                    throw std::runtime_error("Deflate uncompress failed");
-                }
-                data_uncompressed = std::span<const uint8_t>(data_uncompressed_storage.data(), dest_len);
+                data_uncompressed_storage = settings.compression_type_1.uncompress(data_compressed);
+                data_uncompressed = data_uncompressed_storage;
             } else {
                 data_uncompressed = data_compressed;
             }
@@ -160,15 +149,7 @@ namespace NoName24 {
 
             if(settings.compression_type == 1) { // Deflate
                 settings.compression_type_1.expected_size = data.size();
-                std::vector<uint8_t> compressed(compressBound(data.size()));
-                mz_ulong compressed_len = compressed.size();
-                int status = mz_compress2(compressed.data(), &compressed_len,
-                                       data.data(), data.size(), settings.compression_type_1.level);
-                if(status != MZ_OK) {
-                    throw std::runtime_error("Deflate compress failed");
-                }
-                compressed.resize(compressed_len);
-                data = std::move(compressed);
+                data = settings.compression_type_1.compress(data);
             }
 
             uint64_t data_size = data.size();

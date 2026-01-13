@@ -50,6 +50,9 @@ namespace NoName24 {
             uint8_t level = 6;
             uint64_t expected_size;
 
+            std::vector<uint8_t> compress(std::span<const uint8_t> uncompressed);
+            std::vector<uint8_t> uncompress(std::span<const uint8_t> compressed);
+
             size_t parse(std::span<const uint8_t> data);
             std::vector<uint8_t> dump();
         };
