@@ -5,24 +5,22 @@
 #define NONAME24_BLOCKYBINARY_INTHELPER_HPP
 
 #include <cstdint> // u/intX_t
-#include <vector> // std::vector
+#include <span> // std::span
+#include <array> // std::array
 #include <string> // std::string
 
 namespace NoName24 {
     namespace BlockyBinary {
         namespace IntHelper {
-            // uintX_to_hex
-            std::string uint64_to_hex(uint64_t v);
+            std::string uint64_to_hex(const uint64_t& v);
 
-            // uintX_to_uvec8
-            std::vector<uint8_t> uint16_to_uvec8(uint16_t v);
-            std::vector<uint8_t> uint32_to_uvec8(uint32_t v);
-            std::vector<uint8_t> uint64_to_uvec8(uint64_t v);
+            std::array<uint8_t, 2> uint16_to_uarray8(const uint16_t& v);
+            std::array<uint8_t, 4> uint32_to_uarray8(const uint32_t& v);
+            std::array<uint8_t, 8> uint64_to_uarray8(const uint64_t& v);
 
-            // uvec8_to_uintX
-            uint16_t uvec8_to_uint16(const std::vector<uint8_t>& v);
-            uint32_t uvec8_to_uint32(const std::vector<uint8_t>& v);
-            uint64_t uvec8_to_uint64(const std::vector<uint8_t>& v);
+            uint16_t uspan8_to_uint16(std::span<const uint8_t> v);
+            uint32_t uspan8_to_uint32(std::span<const uint8_t> v);
+            uint64_t uspan8_to_uint64(std::span<const uint8_t> v);
         };
     };
 };

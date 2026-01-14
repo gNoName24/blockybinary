@@ -50,7 +50,8 @@ void dump() {
         dump_recurs(blocksettings, mainblock, data_main, step, 4);
     }
 
-    std::vector<unsigned char> mainblock_dump = mainblock.dump();
+    std::vector<uint8_t> mainblock_dump;
+    mainblock.dump_to(mainblock_dump);
     file.write(reinterpret_cast<const char*>(mainblock_dump.data()), mainblock_dump.size());
 
     // mainblock.print(0);

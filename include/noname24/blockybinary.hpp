@@ -30,7 +30,7 @@ namespace NoName24 {
 /*  - Задумка блоков
  *  Блок состоит из частей, который делится лишь смещениями
  *  Сдвиги побайтовые, битовый сдвиги не используются
- *  [размер блока - uint64_t] [настройки] [название - uint16_t] [название] [данные - uint64_t] [данные] [xxh3 (все предыдущие блоки вместе взятые)]
+ *  [magic] [настройки] [uint16_t / название] [uint64_t / данные] [xxh3 (все предыдущие блоки вместе взятые)]
  *
  *  [настройки] содержит в себе:
  *      1. Количество вложенных блоков, помещенные в данные ПЕРЕД сырыми байтами (uint32_t)
@@ -45,23 +45,22 @@ namespace NoName24 {
         constexpr size_t XXH128_SIZE = 16;
 
         struct BlockSettings_Deflate {
-            static constexpr uint8_t MAX_SIZE_BYTE = 1 + 8;
+            static constexpr uint8_t SIZE_BYTE = 1 + 8;
 
             uint8_t level = 6;
-            uint64_t expected_size;
+            uint64_t expected_size; // АВТООПРЕДЕЛЯЕТСЯ
 
             std::vector<uint8_t> compress(std::span<const uint8_t> uncompressed);
             std::vector<uint8_t> uncompress(std::span<const uint8_t> compressed);
 
             size_t parse(std::span<const uint8_t> data);
-            std::vector<uint8_t> dump();
+            std::vector<uint8_t> dump_ret();
+            void dump_to(std::vector<uint8_t>& ret);
         };
         struct BlockSettings {
-            static constexpr uint8_t MAX_SIZE_BYTE = 4 + 1 + BlockSettings_Deflate::MAX_SIZE_BYTE + 1;
 
             // 1
-            bool block_number_auto = true;
-            uint32_t block_number = 0;
+            uint32_t block_number; // АВТООПРЕДЕЛЯЕТСЯ
 
             // 2
             uint8_t compression_type = 0;
@@ -74,22 +73,31 @@ namespace NoName24 {
 
             size_t get_selfsize();
 
-            uint64_t parse(std::span<const uint8_t> data);
-            std::vector<uint8_t> dump();
+            size_t parse(std::span<const uint8_t> data);
+            std::vector<uint8_t> dump_ret();
+            void dump_to(std::vector<uint8_t>& ret);
 
 #if NONAME24_BLOCKYBINARY_ENABLE_PRINT
             void print(int tab);
 #endif
-
-            BlockSettings() {}
         };
         struct Block {
-            BlockSettings settings; // обязательные настройки
-            std::string name = "UNKNOWN"; // название
+            std::array<uint8_t, 8> magic_source = {'N', 'N', '2', '4', 'B', 'L', 'B', 'N'}; // def: NN24BLBN
+            uint64_t magic = 0x000000000000000000; // на основе magic_source
+            void magic_generate();
+            void magic_generate(std::span<const uint8_t> magic_source);
+
+            // uint64_t block_size; // АВТООПРЕДЕЛЯЕТСЯ
+
+            BlockSettings settings;
+
+            // имеет uint16_t name_size
+            std::string name = "UNKNOWN";
 
             // данные
+            // имеет uint64_t data_size
             std::vector<Block> data_blocks; // на основе block_number в base_settings
-            std::unordered_map<std::string, size_t> data_blocks_indexed;
+            std::unordered_map<std::string, size_t> data_blocks_indexed; // получение индекса блока на основе name
             std::vector<uint8_t> data_main; // всё что после data_blocks в упакованных данных
 
             // xxh3
@@ -98,18 +106,26 @@ namespace NoName24 {
 
             size_t get_selfsize();
 
-            void add_block(Block& block);
+            void add_block(const Block& block); // для копирования
+            void add_block(Block&& block); // для перемещения
 
-            void parse(std::span<const uint8_t> data);
-            std::vector<uint8_t> dump();
+            size_t parse(std::span<const uint8_t> data);
+            std::vector<uint8_t> dump_ret();
+            void dump_to(std::vector<uint8_t>& ret);
 
 #if NONAME24_BLOCKYBINARY_ENABLE_PRINT
             void print(int tab);
 #endif
 
-            Block() {}
-            Block(BlockSettings settings): settings(settings) {}
-            Block(BlockSettings settings, std::string name): settings(settings), name(name) {}
+            Block() {
+                magic_generate();
+            };
+            Block(const BlockSettings& settings): settings(settings) {
+                magic_generate();
+            };
+            Block(const BlockSettings& settings, const std::string& name): settings(settings), name(name) {
+                magic_generate();
+            };
         };
     };
 };

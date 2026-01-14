@@ -27,7 +27,8 @@ struct BlockSettings {
 };
 
 struct Block {
-    u64 block_size;
+    u64 magic;
+    
     BlockSettings settings;
 
     // name

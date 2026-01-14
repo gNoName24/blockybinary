@@ -2,7 +2,7 @@
 namespace BlockyArchiver = NoName24::BlockyArchiver;
 
 #include <string> // std::string
-#include <iostream> // std::print
+#include <iostream> // std::cout
 #include <filesystem> // std::filesystem
 #include <stdexcept> // std::runtime_error
 
@@ -19,6 +19,7 @@ int main(int argc, char **argv) {
             if(argc > 2) {
                 std::filesystem::path file_path(argv[2]);
                 std::vector<std::filesystem::path> pack_paths;
+                pack_paths.reserve(argc - 3);
                 for(int i = 3; i < argc; i++) {
                     pack_paths.push_back(argv[i]);
                 }

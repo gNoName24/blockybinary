@@ -11,26 +11,25 @@ namespace NoName24 {
         size_t BlockSettings::get_selfsize() {
             size_t selfsize = 0;
 
-            std::vector<uint8_t> dump_vector = dump();
+            std::vector<uint8_t> dump_vector;
+            dump_to(dump_vector);
             selfsize += dump_vector.size();
 
             return selfsize;
         }
 
-        uint64_t BlockSettings::parse(std::span<const uint8_t> data) {
+        size_t BlockSettings::parse(std::span<const uint8_t> data) {
             size_t byte_shift = 0; // сдвиг
 
             std::span<const uint8_t> block_number_span = data.subspan(byte_shift, 4);
-            block_number = IntHelper::uvec8_to_uint32(
-                std::vector<uint8_t>(block_number_span.begin(), block_number_span.end())
-            );
+            block_number = IntHelper::uspan8_to_uint32(block_number_span);
             byte_shift += 4;
 
             compression_type = data[byte_shift];
             byte_shift += 1;
 
             if(compression_type == 1) {
-                std::span<const uint8_t> compression_type_1_span = data.subspan(byte_shift, BlockSettings_Deflate::MAX_SIZE_BYTE);
+                std::span<const uint8_t> compression_type_1_span = data.subspan(byte_shift, BlockSettings_Deflate::SIZE_BYTE);
                 byte_shift += compression_type_1.parse(compression_type_1_span);
             }
 
@@ -40,11 +39,14 @@ namespace NoName24 {
             return byte_shift;
         }
 
-        std::vector<uint8_t> BlockSettings::dump() {
-            std::vector<uint8_t> ret = {};
-
+        std::vector<uint8_t> BlockSettings::dump_ret() {
+            std::vector<uint8_t> ret;
+            dump_to(ret);
+            return ret;
+        }
+        void BlockSettings::dump_to(std::vector<uint8_t>& ret) {
             // 1 - block_number
-            std::vector<uint8_t> block_number_vector = IntHelper::uint32_to_uvec8(block_number);
+            std::array<uint8_t, 4> block_number_vector = IntHelper::uint32_to_uarray8(block_number);
             ret.insert(ret.end(), block_number_vector.begin(), block_number_vector.end());
 
             // 2 - compression_type
@@ -52,14 +54,13 @@ namespace NoName24 {
 
             // ?3 - compression_type_1
             if(compression_type == 1) {
-                std::vector<uint8_t> compression_type_1_dump = compression_type_1.dump();
+                std::vector<uint8_t> compression_type_1_dump;
+                compression_type_1.dump_to(compression_type_1_dump);
                 ret.insert(ret.end(), compression_type_1_dump.begin(), compression_type_1_dump.end());
             }
 
             // 4 - xxh3_bit
             ret.push_back(xxh3_bit);
-
-            return ret;
         }
 
 #if NONAME24_BLOCKYBINARY_ENABLE_PRINT

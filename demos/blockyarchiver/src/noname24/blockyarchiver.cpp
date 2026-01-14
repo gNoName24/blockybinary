@@ -9,11 +9,11 @@
 
 namespace NoName24 {
     namespace BlockyArchiver {
-        void pack(std::filesystem::path file_path, std::span<std::filesystem::path> pack_paths) {
+        void pack(const std::filesystem::path& file_path, std::span<const std::filesystem::path> pack_paths) {
             BlockyBinary::BlockSettings settings;
             pack(file_path, pack_paths, settings);
         }
-        void pack(std::filesystem::path file_path, std::span<std::filesystem::path> pack_paths, BlockyBinary::BlockSettings& block_settings) {
+        void pack(const std::filesystem::path& file_path, std::span<const std::filesystem::path> pack_paths, BlockyBinary::BlockSettings& block_settings) {
             if(file_path.extension() != standart_file_extension) {
                 std::cout << "Рекомендуется использовать разрешение " << standart_file_extension << std::endl;
             }
@@ -21,18 +21,19 @@ namespace NoName24 {
             BlockyBinary::Block block_archive(block_settings, "root");
             for(int i = 0; i < pack_paths.size(); i++) {
                 BlockyBinary::Block block_next = pack_block(pack_paths[i], block_settings);
-                block_archive.add_block(block_next);
+                block_archive.add_block(std::move(block_next));
             }
 
-            std::ofstream file(file_path);
+            std::ofstream file(file_path, std::ios::binary);
 
             std::cout << "dump" << std::endl;
-            std::vector<unsigned char> block_archive_dump = block_archive.dump();
+            std::vector<unsigned char> block_archive_dump;
+            block_archive.dump_to(block_archive_dump);
             file.write(reinterpret_cast<const char*>(block_archive_dump.data()), block_archive_dump.size());
 
             file.close();
         }
-        BlockyBinary::Block pack_block(std::filesystem::path pack_path, BlockyBinary::BlockSettings& block_settings) {
+        BlockyBinary::Block pack_block(const std::filesystem::path& pack_path, BlockyBinary::BlockSettings& block_settings) {
             if(!std::filesystem::exists(pack_path)) throw std::runtime_error(pack_path.string() + " не существует");
             BlockyBinary::Block block(block_settings, pack_path.string());
 
@@ -41,7 +42,7 @@ namespace NoName24 {
                 block.settings.block_number = 0;
                 block.settings.compression_type = 0;
 
-                std::ifstream file(pack_path);
+                std::ifstream file(pack_path, std::ios::binary);
                 block.data_main = std::vector<uint8_t>((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
                 file.close();
             } else {
@@ -53,8 +54,7 @@ namespace NoName24 {
                 block.settings.compression_type = 0;
 
                 for(int i = 0; i < pack_paths.size(); i++) {
-                    BlockyBinary::Block block_next = pack_block(pack_paths[i], block_settings);
-                    block.add_block(block_next);
+                    block.add_block(pack_block(pack_paths[i], block_settings));
                 }
             }
 

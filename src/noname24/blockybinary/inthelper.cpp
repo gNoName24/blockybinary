@@ -11,7 +11,7 @@ namespace NoName24 {
     namespace BlockyBinary {
         namespace IntHelper {
             // uintX_to_hex
-            std::string uint64_to_hex(uint64_t v) {
+            std::string uint64_to_hex(const uint64_t& v) {
                 std::stringstream ss;
                 ss << std::hex << std::uppercase << std::setfill('0');
 
@@ -23,13 +23,13 @@ namespace NoName24 {
             }
 
             // uintX_to_uvec8
-            std::vector<uint8_t> uint16_to_uvec8(uint16_t v) {
+            std::array<uint8_t, 2> uint16_to_uarray8(const uint16_t& v) {
                 return {
                     uint8_t(v & 0xFF),
                     uint8_t((v >> 8) & 0xFF)
                 };
             }
-            std::vector<uint8_t> uint32_to_uvec8(uint32_t v) {
+            std::array<uint8_t, 4> uint32_to_uarray8(const uint32_t& v) {
                 return {
                     uint8_t(v & 0xFF),
                     uint8_t((v >> 8) & 0xFF),
@@ -37,7 +37,7 @@ namespace NoName24 {
                     uint8_t((v >> 24) & 0xFF)
                 };
             }
-            std::vector<uint8_t> uint64_to_uvec8(uint64_t v) {
+            std::array<uint8_t, 8> uint64_to_uarray8(const uint64_t& v) {
                 return {
                     uint8_t(v & 0xFF),
                     uint8_t((v >> 8) & 0xFF),
@@ -51,17 +51,17 @@ namespace NoName24 {
             }
 
             // uvec8_to_uintX
-            uint16_t uvec8_to_uint16(const std::vector<uint8_t>& v) {
+            uint16_t uspan8_to_uint16(std::span<const uint8_t> v) {
                 if(v.size() < 2)
-                    throw std::runtime_error("uvec8_to_uint16: vector too small");
+                    throw std::runtime_error("uspan8_to_uint16: span too small");
                 return static_cast<uint16_t>(
                     (uint16_t(uint8_t(v[0]))) |
                     (uint16_t(uint8_t(v[1])) << 8)
                 );
             }
-            uint32_t uvec8_to_uint32(const std::vector<uint8_t>& v) {
+            uint32_t uspan8_to_uint32(std::span<const uint8_t> v) {
                 if(v.size() < 4)
-                    throw std::runtime_error("uvec8_to_uint32: vector too small");
+                    throw std::runtime_error("uspan8_to_uint32: span too small");
                 return static_cast<uint32_t>(
                     (uint32_t(uint8_t(v[0]))) |
                     (uint32_t(uint8_t(v[1])) << 8) |
@@ -69,9 +69,9 @@ namespace NoName24 {
                     (uint32_t(uint8_t(v[3])) << 24)
                 );
             }
-            uint64_t uvec8_to_uint64(const std::vector<uint8_t>& v) {
+            uint64_t uspan8_to_uint64(std::span<const uint8_t> v) {
                 if(v.size() < 8)
-                    throw std::runtime_error("uvec8_to_uint64: vector too small");
+                    throw std::runtime_error("uspan8_to_uint64: span too small");
                 return static_cast<uint64_t>(
                     (uint64_t(uint8_t(v[0]))) |
                     (uint64_t(uint8_t(v[1])) << 8) |
