@@ -24,8 +24,11 @@ int main(int argc, char **argv) {
                     pack_paths.push_back(argv[i]);
                 }
                 BlockyBinary::BlockSettings settings;
-                settings.compression_type = 1;
-                settings.compression_type_1.level = 9;
+                settings.modules.push_back(std::make_unique<BlockyBinary::BlockSettingsModule_XXH3>());
+                BlockyBinary::BlockSettingsModule_XXH3* XXH3_ptr = dynamic_cast<BlockyBinary::BlockSettingsModule_XXH3*>(settings.modules[0].get());
+                XXH3_ptr->xxh3_bit = 0;
+                settings.modules.push_back(std::make_unique<BlockyBinary::BlockSettingsModule_CompressDeflate>());
+                BlockyBinary::BlockSettingsModule_CompressDeflate* CompressDeflate_ptr = dynamic_cast<BlockyBinary::BlockSettingsModule_CompressDeflate*>(settings.modules[1].get());
 
                 BlockyArchiver::pack(file_path, pack_paths, settings);
             } else {

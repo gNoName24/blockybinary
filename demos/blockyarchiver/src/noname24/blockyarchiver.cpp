@@ -40,7 +40,6 @@ namespace NoName24 {
             if(std::filesystem::is_regular_file(pack_path)) {
                 std::cout << "pack: " << pack_path.string() << std::endl;
                 block.settings.block_number = 0;
-                block.settings.compression_type = 0;
 
                 std::ifstream file(pack_path, std::ios::binary);
                 block.data_main = std::vector<uint8_t>((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
@@ -51,7 +50,14 @@ namespace NoName24 {
                     pack_paths.push_back(entry.path());
                 }
                 block.settings.block_number = pack_paths.size();
-                block.settings.compression_type = 0;
+
+                // deflate
+                if(!block.settings.modules.empty() && block.settings.modules[0]) {
+                    BlockyBinary::BlockSettingsModule_CompressDeflate* CompressDeflate_ptr = dynamic_cast<BlockyBinary::BlockSettingsModule_CompressDeflate*>(block.settings.modules[0].get());
+                    if(CompressDeflate_ptr) {
+                        CompressDeflate_ptr->enable = false;
+                    }
+                }
 
                 for(int i = 0; i < pack_paths.size(); i++) {
                     block.add_block(pack_block(pack_paths[i], block_settings));

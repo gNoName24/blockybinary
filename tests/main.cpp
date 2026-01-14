@@ -38,11 +38,10 @@ void dump() {
     }
 
     BlockyBinary::BlockSettings blocksettings;
-    blocksettings.compression_type = 0;
-    blocksettings.compression_type_1.level = 9;
-    blocksettings.xxh3_bit = 1;
+    //blocksettings.compression_type = 0;
+    //blocksettings.compression_type_1.level = 9;
     BlockyBinary::Block mainblock(blocksettings, "mainblock");
-    mainblock.settings.compression_type = 1;
+    //mainblock.settings.compression_type = 1;
     mainblock.data_main = std::vector<uint8_t>(data_main.begin(), data_main.end());
 
     for(int i = 0; i < 4; i++) {

@@ -6,7 +6,7 @@
 
 namespace NoName24 {
     namespace BlockyBinary {
-        std::vector<uint8_t> BlockSettings_Deflate::compress(std::span<const uint8_t> uncompressed) {
+        /*std::vector<uint8_t> BlockSettings_Deflate::compress(std::span<const uint8_t> uncompressed) {
             std::vector<uint8_t> ret;
 
             expected_size = uncompressed.size();
@@ -106,6 +106,6 @@ namespace NoName24 {
             // expected_size
             std::array<uint8_t, 8> expected_size_vector = IntHelper::uint64_to_uarray8(expected_size);
             ret.insert(ret.end(), expected_size_vector.begin(), expected_size_vector.end());
-        }
+        }*/
     };
 };

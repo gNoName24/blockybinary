@@ -41,7 +41,7 @@ namespace NoName24 {
         size_t Block::parse(std::span<const uint8_t> data) {
             size_t byte_shift = 0; // сдвиг
 
-            // размер блока
+            /*// размер блока
             std::span<const uint8_t> block_size_span = data.subspan(byte_shift, 8);
             uint64_t block_size = IntHelper::uspan8_to_uint64(block_size_span);
             byte_shift += 8;
@@ -128,7 +128,7 @@ namespace NoName24 {
                 if(xxh128_current.high64 != xxh128.high64) {
                     throw std::runtime_error(name + " не прошел проверку на целостность (xxh128 high64)");
                 }
-            }
+            }*/
 
             return byte_shift;
         }
@@ -150,12 +150,20 @@ namespace NoName24 {
             std::array<uint8_t, 8> magic_array = IntHelper::uint64_to_uarray8(magic);
             ret.insert(ret.end(), magic_array.begin(), magic_array.end());
 
+            // begin - in
+            for(int i = 0; i < settings.modules.size(); i++) {
+                settings.modules[i]->dump_begin_in(ret);
+            }
+
             // settings - in
             std::vector<uint8_t> settings_vector;
 
             // name - in
             uint16_t name_size = name.size();
             std::array<uint8_t, 2> name_size_array = IntHelper::uint16_to_uarray8(name_size);
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_name_in(ret, name_size, name_size_array, name);
+            }
 
             // data - in
             std::vector<uint8_t> data;
@@ -163,30 +171,20 @@ namespace NoName24 {
                 data_blocks[i].dump_to(data);
             }
             data.insert(data.end(), data_main.begin(), data_main.end());
-            if(settings.compression_type == 1) { // Deflate
-                data = settings.compression_type_1.compress(data);
-            }
             uint64_t data_size = data.size();
             std::array<uint8_t, 8> data_size_array = IntHelper::uint64_to_uarray8(data_size);
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_data_in(ret, data_size, data_size_array, data_blocks, data_main, data);
+            }
 
-            // xxh3 - in
-            std::vector<uint8_t> xxh3;
-            if(settings.xxh3_bit == 0) {
-                uint64_t xxh3_64 = XXH3_64bits(ret.data(), ret.size());
-                std::array<uint8_t, 8> xxh3_buffer = IntHelper::uint64_to_uarray8(xxh3_64);
-                xxh3.insert(xxh3.end(), xxh3_buffer.begin(), xxh3_buffer.end());
+            // end - in
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_end_in(ret);
+            }
 
-                this->xxh3 = xxh3_64;
-            } else
-            if(settings.xxh3_bit == 1) {
-                std::array<uint8_t, 8> xxh3_128_buffer;
-                XXH128_hash_t xxh3_128 = XXH3_128bits(ret.data(), ret.size());
-                xxh3_128_buffer = IntHelper::uint64_to_uarray8(xxh3_128.low64);
-                xxh3.insert(xxh3.end(), xxh3_128_buffer.begin(), xxh3_128_buffer.end());
-                xxh3_128_buffer = IntHelper::uint64_to_uarray8(xxh3_128.high64);
-                xxh3.insert(xxh3.end(), xxh3_128_buffer.begin(), xxh3_128_buffer.end());
-
-                this->xxh128 = xxh3_128;
+            // begin - out
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_begin_out(ret);
             }
 
             // settings - out
@@ -196,13 +194,21 @@ namespace NoName24 {
             // name - out
             ret.insert(ret.end(), name_size_array.begin(), name_size_array.end());
             ret.insert(ret.end(), name.begin(), name.end());
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_name_out(ret, name_size, name_size_array, name);
+            }
 
             // data - out
             ret.insert(ret.end(), data_size_array.begin(), data_size_array.end());
             ret.insert(ret.end(), data.begin(), data.end());
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_data_out(ret, data_size, data_size_array, data_blocks, data_main, data);
+            }
 
-            // xxh3 - out
-            ret.insert(ret.end(), xxh3.begin(), xxh3.end());
+            // end - out
+            for(int i = 0; i < settings.modules.size(); i++) { // module
+                settings.modules[i]->dump_end_out(ret);
+            }
 
             /*
             // [настройки] - settings (начало)

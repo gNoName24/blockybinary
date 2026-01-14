@@ -37,39 +37,134 @@ namespace NoName24 {
  *      2. Какой тип сжатия данных использовать (uint8_t)
  *             0 - Не использовать сжатие
  *             1 - Deflate (https://github.com/richgel999/miniz)
- *      ?3. Настройки для Deflate (ТОЛЬКО ЕСЛИ ТИП СЖАТИЯ - 1)
  *      4. Сколько битов использовать для xxh3 (0 - 64 / 1 - 128) (uint8_t)
  */
 
         constexpr size_t XXH64_SIZE = 8;
         constexpr size_t XXH128_SIZE = 16;
 
-        struct BlockSettings_Deflate {
-            static constexpr uint8_t SIZE_BYTE = 1 + 8;
+        struct Block;
+        struct BlockSettingsModuleBase {
+            virtual std::unique_ptr<BlockSettingsModuleBase> clone() const = 0; // глубокое копирование
 
-            uint8_t level = 6;
+            virtual void dump_begin_in(
+                std::vector<uint8_t>& ret
+            ) {}
+            virtual void dump_name_in(
+                std::vector<uint8_t>& ret,
+                uint16_t& name_size,
+                std::array<uint8_t, 2>& name_size_array,
+                std::string& name
+            ) {}
+            virtual void dump_data_in(
+                std::vector<uint8_t>& ret,
+                uint64_t& data_size,
+                std::array<uint8_t, 8>& data_size_array,
+                std::vector<Block> data_blocks,
+                std::vector<uint8_t> data_main,
+                std::vector<uint8_t>& data
+            ) {}
+            virtual void dump_end_in(
+                std::vector<uint8_t>& ret
+            ) {}
+            virtual void dump_begin_out(
+                std::vector<uint8_t>& ret
+            ) {}
+            virtual void dump_name_out(
+                std::vector<uint8_t>& ret,
+                uint16_t& name_size,
+                std::array<uint8_t, 2>& name_size_array,
+                std::string& name
+            ) {}
+            virtual void dump_data_out(
+                std::vector<uint8_t>& ret,
+                uint64_t& data_size,
+                std::array<uint8_t, 8>& data_size_array,
+                std::vector<Block> data_blocks,
+                std::vector<uint8_t> data_main,
+                std::vector<uint8_t>& data
+            ) {}
+            virtual void dump_end_out(
+                std::vector<uint8_t>& ret
+            ) {}
+
+            virtual size_t parse(std::span<const uint8_t> data) { return 0; }
+            virtual std::vector<uint8_t> dump_ret() {
+                std::vector<uint8_t> ret;
+                dump_to(ret);
+                return ret;
+            }
+            virtual void dump_to(std::vector<uint8_t>& ret) {}
+
+            virtual ~BlockSettingsModuleBase() = default;
+        };
+
+        // ----- MODULES -----
+        /*  Модуль CompressDeflate
+         * Использует чистый deflate (RFC 1951) - библиотека: https://github.com/richgel999/miniz
+         * Что добавляет в settings:
+         *     uint8_t level - уровень сжатия
+         *     uint8_t strategy - стратегия сжатия
+         *     uint64_t expected_size - изначальный размер данных
+         * При dump: сжимаются данные
+         *     Использует: level, strategy
+         * При parse: расжимаются данные
+         *     Использует: expected_size
+         */
+        struct BlockSettingsModule_CompressDeflate : BlockSettingsModuleBase {
+            bool enable = true;
+
+            uint8_t level = MZ_DEFAULT_LEVEL; // 0..9
+            uint8_t strategy = MZ_DEFAULT_STRATEGY; // 0..4 (MZ_DEFAULT_STRATEGY, MZ_FILTERED, MZ_HUFFMAN_ONLY, MZ_RLE, MZ_FIXED)
             uint64_t expected_size; // АВТООПРЕДЕЛЯЕТСЯ
 
-            std::vector<uint8_t> compress(std::span<const uint8_t> uncompressed);
-            std::vector<uint8_t> uncompress(std::span<const uint8_t> compressed);
+            void dump_data_in( // compress - in
+                std::vector<uint8_t>& ret,
+                uint64_t& data_size,
+                std::array<uint8_t, 8>& data_size_array,
+                std::vector<Block> data_blocks,
+                std::vector<uint8_t> data_main,
+                std::vector<uint8_t>& data
+            ) override;
 
-            size_t parse(std::span<const uint8_t> data);
-            std::vector<uint8_t> dump_ret();
-            void dump_to(std::vector<uint8_t>& ret);
+            void dump_to(std::vector<uint8_t>& ret) override;
+
+            std::unique_ptr<BlockSettingsModuleBase> clone() const override {
+                return std::make_unique<BlockSettingsModule_CompressDeflate>(*this);
+            }
         };
-        struct BlockSettings {
+        /*  Модуль XXH3
+         * Использует xxHash - библиотека: https://github.com/Cyan4973/xxHash
+         * Что добавляет в settings:
+         *     uint8_t xxh3_bit - битность выходного XXH3 (64 / 128)
+         * При dump: под конец берется ret, вычисляется XXH3 и помещается в самый конец
+         *     Использует: xxh3_bit
+         * При parse: под конец берется XXH3 из конца блока, вычисляется другой независимый XXH3 на основе предоставленных данных и они оба сравниваются
+         *     Использует: xxh3_bit
+         */
+        struct BlockSettingsModule_XXH3 : BlockSettingsModuleBase {
+            bool enable = true;
 
+            uint8_t xxh3_bit = 0; // 64, 128
+
+            void dump_end_out(
+                std::vector<uint8_t>& ret
+            ) override;
+
+            void dump_to(std::vector<uint8_t>& ret) override;
+
+            std::unique_ptr<BlockSettingsModuleBase> clone() const override {
+                return std::make_unique<BlockSettingsModule_XXH3>(*this);
+            }
+        };
+        // -------------------
+
+        struct BlockSettings {
             // 1
             uint32_t block_number; // АВТООПРЕДЕЛЯЕТСЯ
 
-            // 2
-            uint8_t compression_type = 0;
-
-            // ?3 - Deflate
-            BlockSettings_Deflate compression_type_1;
-
-            // 4
-            uint8_t xxh3_bit = 0;
+            // 3 - модули
+            std::vector<std::unique_ptr<BlockSettingsModuleBase>> modules;
 
             size_t get_selfsize();
 
@@ -80,6 +175,29 @@ namespace NoName24 {
 #if NONAME24_BLOCKYBINARY_ENABLE_PRINT
             void print(int tab);
 #endif
+
+            BlockSettings() = default;
+            BlockSettings(BlockSettings&&) = default;
+            BlockSettings& operator=(BlockSettings&&) = default;
+            BlockSettings(const BlockSettings& other) : block_number(other.block_number) {
+                modules.reserve(other.modules.size());
+                for(const auto& p : other.modules) {
+                    if(p) modules.push_back(p->clone());
+                    else modules.push_back(nullptr);
+                }
+            }
+            BlockSettings& operator=(const BlockSettings& other) {
+                if (this == &other) return *this;
+                block_number = other.block_number;
+                modules.clear();
+
+                modules.reserve(other.modules.size());
+                for(const auto& p : other.modules) {
+                    if(p) modules.push_back(p->clone());
+                    else modules.push_back(nullptr);
+                }
+                return *this;
+            }
         };
         struct Block {
             std::array<uint8_t, 8> magic_source = {'N', 'N', '2', '4', 'B', 'L', 'B', 'N'}; // def: NN24BLBN
