@@ -1,11 +1,8 @@
-#define NONAME24_BLOCKYBINARY_ENABLE_PRINT 1
-
 #include <noname24/blockybinary.hpp>
 
 #include <string> // std::string
-#include <fstream>
-
-#include <print>
+#include <fstream> // std::ifstream ; std::ofstream
+#include <print> // std::print
 
 namespace BlockyBinary = NoName24::BlockyBinary;
 
@@ -27,54 +24,65 @@ void dump_recurs(BlockyBinary::BlockSettings& blocksettings, BlockyBinary::Block
     block.add_block(recursblock);
 }
 
-void dump() {
+void dump(BlockyBinary::BlockSettings& settings) {
     std::print("DUMP\n");
     std::ofstream file(filename, std::ios::binary);
 
     std::string data_main;
-    int data_main_length = 4;
+    int data_main_length = 1;
     for(int i = 0; i < data_main_length; i++) {
         data_main += "hello blocks! ";
     }
 
-    BlockyBinary::BlockSettings blocksettings;
-    //blocksettings.compression_type = 0;
-    //blocksettings.compression_type_1.level = 9;
-    BlockyBinary::Block mainblock(blocksettings, "mainblock");
-    //mainblock.settings.compression_type = 1;
+    BlockyBinary::Block mainblock(settings, "mainblock");
     mainblock.data_main = std::vector<uint8_t>(data_main.begin(), data_main.end());
 
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 2; i++) {
         int step = 0;
-        dump_recurs(blocksettings, mainblock, data_main, step, 4);
+        dump_recurs(settings, mainblock, data_main, step, 2);
     }
 
     std::vector<uint8_t> mainblock_dump;
     mainblock.dump_to(mainblock_dump);
     file.write(reinterpret_cast<const char*>(mainblock_dump.data()), mainblock_dump.size());
 
-    // mainblock.print(0);
+    //mainblock.print(0);
 
     file.close();
 }
 
-void parse() {
+void parse(BlockyBinary::BlockSettings& settings) {
     std::print("PARSE\n");
+
+    std::ofstream debug_file("debug_file.txt");
+    BlockyBinary::Debug debug(debug_file);
+
     std::ifstream file(filename, std::ios::binary);
 
-    BlockyBinary::Block mainblock;
+    BlockyBinary::Block mainblock(settings);
 
     std::vector<uint8_t> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-    mainblock.parse(buffer);
+    mainblock.parse(buffer, 0, &debug);
 
-    // mainblock.print(0);
+    //mainblock.print(0);
 
     file.close();
 }
 
 int main(int argc, char **argv) {
-    dump();
-    parse();
+    BlockyBinary::BlockSettings settings;
+
+    //settings.modules.push_back(std::make_unique<BlockyBinary::BlockSettingsModule_Magic>());
+    // BlockyBinary::BlockSettingsModule_Magic* Magic_ptr = dynamic_cast<BlockyBinary::BlockSettingsModule_Magic*>(settings.modules[0].get());
+
+    //settings.modules.push_back(std::make_unique<BlockyBinary::BlockSettingsModule_CompressDeflate>());
+    // BlockyBinary::BlockSettingsModule_CompressDeflate* CompressDeflate_ptr = dynamic_cast<BlockyBinary::BlockSettingsModule_CompressDeflate*>(settings.modules[1].get());
+
+    //settings.modules.push_back(std::make_unique<BlockyBinary::BlockSettingsModule_XXH3>());
+    // BlockyBinary::BlockSettingsModule_XXH3* XXH3_ptr = dynamic_cast<BlockyBinary::BlockSettingsModule_XXH3*>(settings.modules[0].get());
+
+    dump(settings);
+    parse(settings);
 
     return 0;
 }

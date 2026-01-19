@@ -54,7 +54,6 @@ target_link_libraries(blockybinary PRIVATE
 )
 
 # Макросы
-# add_definitions(-DNONAME24_BLOCKYBINARY_ENABLE_PRINT=1)
 
 # Тесты
 if(USE_TESTS)

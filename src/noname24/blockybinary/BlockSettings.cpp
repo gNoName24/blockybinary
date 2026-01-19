@@ -4,8 +4,6 @@
 #include <noname24/blockybinary.hpp>
 #include <noname24/blockybinary/inthelper.hpp>
 
-#include <print> // std::print
-
 namespace NoName24 {
     namespace BlockyBinary {
         size_t BlockSettings::get_selfsize() {
@@ -18,25 +16,26 @@ namespace NoName24 {
             return selfsize;
         }
 
-        size_t BlockSettings::parse(std::span<const uint8_t> data) {
-            size_t byte_shift = 0; // сдвиг
+        size_t BlockSettings::parse(std::span<const uint8_t> ret, size_t offset,
+                                    Debug* debug
+        ) {
+            size_t offset_new = 0;
 
-            /*std::span<const uint8_t> block_number_span = data.subspan(byte_shift, 4);
+            // block_number
+            std::span<const uint8_t> block_number_span = ret.subspan(offset + offset_new, 4);
             block_number = IntHelper::uspan8_to_uint32(block_number_span);
-            byte_shift += 4;
+            offset_new += 4;
 
-            compression_type = data[byte_shift];
-            byte_shift += 1;
+            // custom
+            for(int i = 0; i < modules.size(); i++) {
+                modules[i]->enable = ret[offset + offset_new];
+                offset_new += 1;
 
-            if(compression_type == 1) {
-                std::span<const uint8_t> compression_type_1_span = data.subspan(byte_shift, BlockSettings_Deflate::SIZE_BYTE);
-                byte_shift += compression_type_1.parse(compression_type_1_span);
+                if(!modules[i]->enable) continue;
+                offset_new += modules[i]->parse(ret, offset + offset_new);
             }
 
-            xxh3_bit = data[byte_shift];
-            byte_shift += 1;*/
-
-            return byte_shift;
+            return offset_new;
         }
 
         std::vector<uint8_t> BlockSettings::dump_ret() {
@@ -51,23 +50,11 @@ namespace NoName24 {
 
             // custom
             for(int i = 0; i < modules.size(); i++) {
+                ret.push_back(modules[i]->enable);
+
+                if(!modules[i]->enable) continue;
                 modules[i]->dump_to(ret);
             }
         }
-
-#if NONAME24_BLOCKYBINARY_ENABLE_PRINT
-        void BlockSettings::print(int tab) {
-            tab += 4;
-            std::print("{}settings:\n", std::string(tab, ' '));
-            std::print("{}    block_number: {}\n", std::string(tab, ' '), block_number);
-            std::print("{}    compression_type: {}\n", std::string(tab, ' '), compression_type);
-            if(compression_type == 1) {
-                std::print("{}    compression_type_1:\n", std::string(tab, ' '));
-                std::print("{}        level: {}\n", std::string(tab, ' '), compression_type_1.level);
-                std::print("{}        expected_size: {}\n", std::string(tab, ' '), compression_type_1.expected_size);
-            }
-            std::print("{}    xxh3_bit: {}\n", std::string(tab, ' '), xxh3_bit);
-        }
-#endif
     };
 };
