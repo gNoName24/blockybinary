@@ -1,4 +1,4 @@
-/*     ./src/noname24/blockybinary/inthelper.cpp
+/* ./src/noname24/blockybinary/inthelper.cpp
  * NoName24 - 2026
  */
 #include <noname24/blockybinary/inthelper.hpp>
@@ -10,29 +10,33 @@
 namespace NoName24 {
     namespace BlockyBinary {
         namespace IntHelper {
-            // uintX_to_hex
-            std::string uint8_to_hex(const uint64_t& v) {
+            // uintN_to_hex
+            std::string uint8_to_hex(const uint8_t& v) {
                 std::stringstream ss;
                 ss << std::hex << std::uppercase << std::setfill('0');
-
-                for(int i = 0; i < 1; ++i) {
-                    ss << std::setw(2) << ((v >> (i * 8)) & 0xFF);
-                }
-
+                for(int i = 0; i < 1; ++i) { ss << std::setw(2) << ((v >> (i * 8)) & 0xFF); }
+                return ss.str();
+            }
+            std::string uint16_to_hex(const uint16_t& v) {
+                std::stringstream ss;
+                ss << std::hex << std::uppercase << std::setfill('0');
+                for(int i = 0; i < 2; ++i) { ss << std::setw(2) << ((v >> (i * 8)) & 0xFF); }
+                return ss.str();
+            }
+            std::string uint32_to_hex(const uint32_t& v) {
+                std::stringstream ss;
+                ss << std::hex << std::uppercase << std::setfill('0');
+                for(int i = 0; i < 4; ++i) { ss << std::setw(2) << ((v >> (i * 8)) & 0xFF); }
                 return ss.str();
             }
             std::string uint64_to_hex(const uint64_t& v) {
                 std::stringstream ss;
                 ss << std::hex << std::uppercase << std::setfill('0');
-
-                for(int i = 0; i < 8; ++i) {
-                    ss << std::setw(2) << ((v >> (i * 8)) & 0xFF);
-                }
-
+                for(int i = 0; i < 8; ++i) { ss << std::setw(2) << ((v >> (i * 8)) & 0xFF); }
                 return ss.str();
             }
 
-            // uintX_to_uvec8
+            // uintN_to_uarray8
             std::array<uint8_t, 2> uint16_to_uarray8(const uint16_t& v) {
                 return {
                     uint8_t(v & 0xFF),
@@ -80,7 +84,7 @@ namespace NoName24 {
                 out[7] = (value >> 56) & 0xFF;
             }
 
-            // uvec8_to_uintX
+            // uspan8_to_uintN
             uint16_t uspan8_to_uint16(std::span<const uint8_t> v) {
                 if(v.size() < 2) throw std::runtime_error("uspan8_to_uint16: span too small");
                 return static_cast<uint16_t>(

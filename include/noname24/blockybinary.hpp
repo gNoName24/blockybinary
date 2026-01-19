@@ -26,67 +26,71 @@ namespace NoName24 {
         struct BlockSettingsModuleBase {
             virtual std::unique_ptr<BlockSettingsModuleBase> clone() const = 0; // глубокое копирование
 
-            bool enable = true; // учитывается в dump и parse автоматически
             const std::string name;
+            bool enable = true; // учитывается в dump и parse автоматически
 
+            // parse - in
             virtual size_t parse_begin_in(std::span<const uint8_t> ret, size_t offset,
-                Debug* debug = nullptr
-            ) { return 0; } // in
+                                          Debug* debug = nullptr
+            ) { return 0; }
             virtual size_t parse_name_in(std::span<const uint8_t> ret, size_t offset,
-                std::array<uint8_t, 2>& name_size_array,
-                std::vector<uint8_t>& name_vector,
-                Debug* debug = nullptr
+                                         std::array<uint8_t, 2>& name_size_array,
+                                         std::vector<uint8_t>& name_vector,
+                                         Debug* debug = nullptr
             ) { return 0; }
             virtual size_t parse_data_in(std::span<const uint8_t> ret, size_t offset,
-                std::array<uint8_t, 8>& data_size_array,
-                std::vector<uint8_t>& data_vector,
-                Debug* debug = nullptr
+                                         std::array<uint8_t, 8>& data_size_array,
+                                         std::vector<uint8_t>& data_vector,
+                                         Debug* debug = nullptr
             ) { return 0; }
             virtual size_t parse_end_in(std::span<const uint8_t> ret, size_t offset,
-                Debug* debug = nullptr
+                                        Debug* debug = nullptr
             ) { return 0; }
+            // parse - out
             virtual size_t parse_begin_out(std::span<const uint8_t> ret, size_t offset,
-                Debug* debug = nullptr
+                                           Debug* debug = nullptr
             ) { return 0; } // out
             virtual size_t parse_name_out(std::span<const uint8_t> ret, size_t offset,
-                std::string& name,
-                Debug* debug = nullptr
+                                          std::string& name,
+                                          Debug* debug = nullptr
             ) { return 0; }
             virtual size_t parse_data_out(std::span<const uint8_t> ret, size_t offset,
-                std::vector<Block>& data_blocks,
-                std::vector<uint8_t>& data_main,
-                Debug* debug = nullptr
+                                          std::vector<Block>& data_blocks,
+                                          std::vector<uint8_t>& data_main,
+                                          Debug* debug = nullptr
             ) { return 0; }
             virtual size_t parse_end_out(std::span<const uint8_t> ret, size_t offset,
-                Debug* debug = nullptr
+                                         Debug* debug = nullptr
             ) { return 0; }
 
-            virtual void dump_begin_in(std::vector<uint8_t>& ret) {} // in
+            // dump - in
+            virtual void dump_begin_in(std::vector<uint8_t>& ret) {}
             virtual void dump_name_in(std::vector<uint8_t>& ret,
-                uint16_t& name_size,
-                std::array<uint8_t, 2>& name_size_array,
-                std::string& name
+                                      uint16_t& name_size,
+                                      std::array<uint8_t, 2>& name_size_array,
+                                      std::string& name
             ) {}
             virtual void dump_data_in(std::vector<uint8_t>& ret,
-                uint64_t& data_size,
-                std::array<uint8_t, 8>& data_size_array,
-                std::vector<Block>& data_blocks,
-                std::vector<uint8_t>& data_main,
-                std::vector<uint8_t>& data
+                                      uint64_t& data_size,
+                                      std::array<uint8_t, 8>& data_size_array,
+                                      std::vector<Block>& data_blocks,
+                                      std::vector<uint8_t>& data_main,
+                                      std::vector<uint8_t>& data
             ) {}
             virtual void dump_end_in(std::vector<uint8_t>& ret) {}
-            virtual void dump_begin_out(std::vector<uint8_t>& ret) {} // out
+            // dump - out
+            virtual void dump_begin_out(std::vector<uint8_t>& ret) {}
             virtual void dump_name_out(std::vector<uint8_t>& ret,
-                uint16_t& name_size,
-                std::array<uint8_t, 2>& name_size_array,
-                std::string& name
+                                       uint16_t& name_size,
+                                       std::array<uint8_t, 2>& name_size_array,
+                                       std::string& name
             ) {}
             virtual void dump_data_out(std::vector<uint8_t>& ret,
-                uint64_t& data_size,
-                std::array<uint8_t, 8>& data_size_array,
-                std::vector<Block>& data_blocks,
-                std::vector<uint8_t>& data_main,
-                std::vector<uint8_t>& data
+                                       uint64_t& data_size,
+                                       std::array<uint8_t, 8>& data_size_array,
+                                       std::vector<Block>& data_blocks,
+                                       std::vector<uint8_t>& data_main,
+                                       std::vector<uint8_t>& data
             ) {}
             virtual void dump_end_out(std::vector<uint8_t>& ret) {}
 
@@ -112,18 +116,17 @@ namespace NoName24 {
                     std::array<uint8_t, 8> magic;
                     std::array<uint8_t, 8> magic_source = {'N', 'N', '2', '4', 'B', 'L', 'B', 'N'};
 
-                    void magic_source_to_magic();
+                    void magic_source_to_magic(); // на основе magic_source
                     void magic_source_to_magic(std::span<const uint8_t, 8> magic_source);
 
                     size_t parse_begin_in(std::span<const uint8_t> ret, size_t offset,
-                                        Debug* debug = nullptr
+                                                 Debug* debug = nullptr
                     ) override;
                     void dump_begin_in(std::vector<uint8_t>& ret) override;
 
                     std::unique_ptr<BlockSettingsModuleBase> clone() const override {
                         return std::make_unique<Magic>(*this);
                     }
-
                     Magic();
                 };
                 struct XXH3 : BlockSettingsModuleBase {
@@ -142,7 +145,6 @@ namespace NoName24 {
                     std::unique_ptr<BlockSettingsModuleBase> clone() const override {
                         return std::make_unique<XXH3>(*this);
                     }
-
                     XXH3();
                 };
             };
@@ -151,31 +153,31 @@ namespace NoName24 {
                 struct DeflateInflate : BlockSettingsModuleBase {
                     uint8_t level; // 0..9
                     uint8_t strategy; // 0..4 (MZ_DEFAULT_STRATEGY, MZ_FILTERED, MZ_HUFFMAN_ONLY, MZ_RLE, MZ_FIXED)
-                    uint64_t expected_size; // АВТООПРЕДЕЛЯЕТСЯ
+                    uint64_t expected_size; // (АВТООПРЕДЕЛЯЕТСЯ)
 
-                    size_t parse_data_in(std::span<const uint8_t> ret, size_t offset, // inflate
-                                        std::array<uint8_t, 8>& name_size_array,
-                                        std::vector<uint8_t>& data_vector,
-                                        Debug* debug = nullptr
+                    // inflate
+                    size_t parse_data_in(std::span<const uint8_t> ret, size_t offset,
+                                         std::array<uint8_t, 8>& data_size_array,
+                                         std::vector<uint8_t>& data_vector,
+                                         Debug* debug = nullptr
                     ) override;
-                    void dump_data_in( // deflate
-                        std::vector<uint8_t>& ret,
-                        uint64_t& data_size,
-                        std::array<uint8_t, 8>& data_size_array,
-                        std::vector<Block>& data_blocks,
-                        std::vector<uint8_t>& data_main,
-                        std::vector<uint8_t>& data
+                    // deflate
+                    void dump_data_in(std::vector<uint8_t>& ret,
+                                      uint64_t& data_size,
+                                      std::array<uint8_t, 8>& data_size_array,
+                                      std::vector<Block>& data_blocks,
+                                      std::vector<uint8_t>& data_main,
+                                      std::vector<uint8_t>& data
                     ) override;
 
                     size_t parse(std::span<const uint8_t> ret, size_t offset,
-                                Debug* debug = nullptr
+                                 Debug* debug = nullptr
                     ) override;
                     void dump_to(std::vector<uint8_t>& ret) override;
 
                     std::unique_ptr<BlockSettingsModuleBase> clone() const override {
                         return std::make_unique<DeflateInflate>(*this);
                     }
-
                     DeflateInflate();
                 };
             };
@@ -184,7 +186,7 @@ namespace NoName24 {
 
         struct BlockSettings {
             // 1
-            uint32_t block_number; // АВТООПРЕДЕЛЯЕТСЯ
+            uint32_t block_number; // (АВТООПРЕДЕЛЯЕТСЯ)
 
             // 3 - модули
             std::vector<std::unique_ptr<BlockSettingsModuleBase>> modules;

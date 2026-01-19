@@ -1,4 +1,4 @@
-/*     ./src/noname24/BlockSettings.cpp
+/* ./src/noname24/blockybinary/BlockSettings.cpp
  * NoName24 - 2026
  */
 #include <noname24/blockybinary.hpp>
@@ -26,7 +26,7 @@ namespace NoName24 {
             block_number = IntHelper::uspan8_to_uint32(block_number_span);
             offset_new += 4;
 
-            // custom
+            // modules
             for(int i = 0; i < modules.size(); i++) {
                 modules[i]->enable = ret[offset + offset_new];
                 offset_new += 1;
@@ -48,7 +48,7 @@ namespace NoName24 {
             std::array<uint8_t, 4> block_number_vector = IntHelper::uint32_to_uarray8(block_number);
             ret.insert(ret.end(), block_number_vector.begin(), block_number_vector.end());
 
-            // custom
+            // modules
             for(int i = 0; i < modules.size(); i++) {
                 ret.push_back(modules[i]->enable);
 

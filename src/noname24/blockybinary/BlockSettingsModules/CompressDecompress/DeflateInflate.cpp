@@ -1,4 +1,4 @@
-/*     ./src/noname24/BlockSettingsModules/CompressDecompress/DeflateInflate.cpp
+/* ./src/noname24/BlockSettingsModules/CompressDecompress/DeflateInflate.cpp
  * NoName24 - 2026
  */
 #include <noname24/blockybinary.hpp>
@@ -16,10 +16,10 @@ namespace NoName24 {
                     strategy = MZ_DEFAULT_STRATEGY;
                 }
 
-                size_t DeflateInflate::parse_data_in(std::span<const uint8_t> ret, size_t offset, // uncompress
-                    std::array<uint8_t, 8>& data_size_array,
-                    std::vector<uint8_t>& data_vector,
-                    Debug* debug
+                size_t DeflateInflate::parse_data_in(std::span<const uint8_t> ret, size_t offset,
+                                                     std::array<uint8_t, 8>& data_size_array,
+                                                     std::vector<uint8_t>& data_vector,
+                                                     Debug* debug
                 ) {
                     if(data_vector.empty()) return {};
                     std::vector<uint8_t> data_uncompress(expected_size);
@@ -48,13 +48,12 @@ namespace NoName24 {
 
                     return 0;
                 }
-                void DeflateInflate::dump_data_in( // compress
-                    std::vector<uint8_t>& ret,
-                    uint64_t& data_size,
-                    std::array<uint8_t, 8>& data_size_array,
-                    std::vector<Block>& data_blocks,
-                    std::vector<uint8_t>& data_main,
-                    std::vector<uint8_t>& data
+                void DeflateInflate::dump_data_in(std::vector<uint8_t>& ret,
+                                                  uint64_t& data_size,
+                                                  std::array<uint8_t, 8>& data_size_array,
+                                                  std::vector<Block>& data_blocks,
+                                                  std::vector<uint8_t>& data_main,
+                                                  std::vector<uint8_t>& data
                 ) {
                     std::vector<uint8_t> buffer;
 
@@ -105,7 +104,7 @@ namespace NoName24 {
                 }
 
                 size_t DeflateInflate::parse(std::span<const uint8_t> ret, size_t offset,
-                                                                Debug* debug
+                                             Debug* debug
                 ) {
                     size_t offset_new = 0;
 

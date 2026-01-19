@@ -123,19 +123,20 @@ namespace NoName24 {
         }
         void unpack_block(const BlockyBinary::Block& block, const std::filesystem::path& output_path) {
             BlockyArchiver* block_BlockyArchiver_ptr = dynamic_cast<BlockyArchiver*>(block.settings.modules[0].get());
+            std::filesystem::path path_directory(output_path / block.name);
             if(!block_BlockyArchiver_ptr->enable) { // file
+                std::filesystem::create_directories(path_directory.remove_filename());
+
                 std::filesystem::path path(output_path / block.name);
                 std::cout << "unpack: " << path.string() << std::endl;
-                std::filesystem::path path_directory(output_path / block.name);
-                std::filesystem::create_directories(path_directory.remove_filename());
 
                 std::ofstream file(path);
                 file.write(reinterpret_cast<const char*>(block.data_main.data()), block.data_main.size());
                 file.close();
             } else { // directory
                 if(block.settings.block_number == 0) {
-                    std::filesystem::path path_directory(output_path / block.name);
                     std::filesystem::create_directories(path_directory);
+                    std::cout << "unpack: " << path_directory.string() << "/" << std::endl;
                     return;
                 }
                 for(int i = 0; i < block.settings.block_number; i++) {

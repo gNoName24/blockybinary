@@ -10,8 +10,6 @@ namespace BlockyBinary = NoName24::BlockyBinary;
 #include <filesystem> // std::filesystem
 #include <span> // std::span
 
-#include <iostream>
-
 namespace NoName24 {
     namespace BlockyArchiver {
         constexpr std::string standart_file_extension = ".barc";

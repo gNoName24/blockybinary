@@ -1,4 +1,4 @@
-/*     ./src/noname24/BlockSettingsModules/Security/XXH3.cpp
+/* ./src/noname24/BlockSettingsModules/Security/XXH3.cpp
  * NoName24 - 2026
  */
 #include <noname24/blockybinary.hpp>
@@ -14,7 +14,7 @@ namespace NoName24 {
                 XXH3::XXH3() : BlockSettingsModuleBase("BlockSettingsModules::Security::XXH3") {}
 
                 size_t XXH3::parse_end_out(std::span<const uint8_t> ret, size_t offset,
-                    Debug* debug
+                                           Debug* debug
                 ) {
                     size_t xxh3_size = (xxh3_bit == 0) ? 8 : 16;
 
@@ -50,9 +50,7 @@ namespace NoName24 {
 
                     return xxh3_size;
                 }
-                void XXH3::dump_end_out(
-                    std::vector<uint8_t>& ret
-                ) {
+                void XXH3::dump_end_out(std::vector<uint8_t>& ret) {
                     uint64_t xxh3_64;
                     XXH128_hash_t xxh3_128;
 
@@ -70,7 +68,7 @@ namespace NoName24 {
                 }
 
                 size_t XXH3::parse(std::span<const uint8_t> ret, size_t offset,
-                    Debug* debug
+                                   Debug* debug
                 ) {
                     size_t offset_new = 0;
 

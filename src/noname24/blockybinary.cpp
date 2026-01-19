@@ -1,4 +1,4 @@
-/*     ./src/noname24/blockybinary.cpp
+/* ./src/noname24/blockybinary.cpp
  * NoName24 - 2026
  */
 #include <noname24/blockybinary.hpp>

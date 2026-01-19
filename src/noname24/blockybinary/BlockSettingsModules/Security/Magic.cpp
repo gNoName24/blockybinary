@@ -1,4 +1,4 @@
-/*     ./src/noname24/BlockSettingsModules/Security/Magic.cpp
+/* ./src/noname24/BlockSettingsModules/Security/Magic.cpp
  * NoName24 - 2026
  */
 #include <noname24/blockybinary.hpp>
@@ -26,7 +26,7 @@ namespace NoName24 {
                 }
 
                 size_t Magic::parse_begin_in(std::span<const uint8_t> ret, size_t offset,
-                    Debug* debug
+                                             Debug* debug
                 ) {
                     size_t offset_new = 0;
 
