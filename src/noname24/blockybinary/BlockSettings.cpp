@@ -6,16 +6,6 @@
 
 namespace NoName24 {
     namespace BlockyBinary {
-        size_t BlockSettings::get_selfsize() {
-            size_t selfsize = 0;
-
-            std::vector<uint8_t> dump_vector;
-            dump_to(dump_vector);
-            selfsize += dump_vector.size();
-
-            return selfsize;
-        }
-
         size_t BlockSettings::parse(std::span<const uint8_t> ret, size_t offset,
                                     Debug* debug
         ) {

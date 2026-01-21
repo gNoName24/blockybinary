@@ -6,16 +6,6 @@
 
 namespace NoName24 {
     namespace BlockyBinary {
-        size_t Block::get_selfsize() {
-            size_t selfsize = 0;
-
-            std::vector<uint8_t> dump_vector;
-            dump_to(dump_vector);
-            selfsize += dump_vector.size();
-
-            return selfsize;
-        }
-
         void Block::add_block(Block block) {
             data_blocks.push_back(std::move(block));
             data_blocks_indexed[block.name] = data_blocks.size() - 1;

@@ -1,10 +1,6 @@
 /* ./include/noname24/blockybinary.hpp
  * NoName24 - 2026
  */
-
-/* Доступные макросы:
- */
-
 #ifndef NONAME24_BLOCKYBINARY_HPP
 #define NONAME24_BLOCKYBINARY_HPP
 
@@ -191,8 +187,6 @@ namespace NoName24 {
             // 3 - модули
             std::vector<std::unique_ptr<BlockSettingsModuleBase>> modules;
 
-            size_t get_selfsize();
-
             size_t parse(std::span<const uint8_t> ret, size_t offset,
                          Debug* debug = nullptr
             );
@@ -235,8 +229,6 @@ namespace NoName24 {
             std::vector<Block> data_blocks; // на основе block_number в settings
             std::unordered_map<std::string, size_t> data_blocks_indexed; // получение индекса блока на основе name
             std::vector<uint8_t> data_main; // всё что после data_blocks в упакованных данных
-
-            size_t get_selfsize();
 
             void add_block(Block block);
 
