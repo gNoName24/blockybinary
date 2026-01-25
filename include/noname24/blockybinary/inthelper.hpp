@@ -9,7 +9,7 @@
 #include <array> // std::array
 #include <string> // std::string
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         namespace IntHelper {
             // uintN_to_hex

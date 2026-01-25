@@ -7,7 +7,7 @@
 #include <fstream> // std::ifstream ; std::ofstream
 #include <iostream> // std::cout
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyArchiver {
         void pack(const std::filesystem::path& file_path, std::span<const std::filesystem::path> pack_paths) {
             BlockyBinary::BlockSettings block_settings;

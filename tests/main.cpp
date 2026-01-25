@@ -2,9 +2,9 @@
 
 #include <string> // std::string
 #include <fstream> // std::ifstream ; std::ofstream
-#include <print> // std::print
+#include <iostream> // std::iostream
 
-namespace BlockyBinary = NoName24::BlockyBinary;
+namespace BlockyBinary = noname24::BlockyBinary;
 
 std::string filename = "test.braw";
 
@@ -25,7 +25,7 @@ void dump_recurs(BlockyBinary::BlockSettings& blocksettings, BlockyBinary::Block
 }
 
 void dump(BlockyBinary::BlockSettings& settings) {
-    std::print("DUMP\n");
+    std::cout << "DUMP" << std::endl;
     std::ofstream file(filename, std::ios::binary);
 
     std::string data_main;
@@ -52,7 +52,7 @@ void dump(BlockyBinary::BlockSettings& settings) {
 }
 
 void parse(BlockyBinary::BlockSettings& settings) {
-    std::print("PARSE\n");
+    std::cout << "PARSE" << std::endl;
 
     std::ofstream debug_file("debug_file.txt");
     BlockyBinary::Debug debug(debug_file);

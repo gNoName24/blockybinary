@@ -9,7 +9,7 @@
 // Сторонние библиотеки
 #include <xxhash.h> // https://github.com/Cyan4973/xxHash
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         namespace BlockSettingsModules {
             namespace Security {

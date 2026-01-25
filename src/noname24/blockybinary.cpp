@@ -3,7 +3,7 @@
  */
 #include <noname24/blockybinary.hpp>
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
     };
 };

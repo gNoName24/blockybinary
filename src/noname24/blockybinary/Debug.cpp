@@ -6,7 +6,7 @@
 
 #include <fstream> // std::ifstream ; std::ofstream
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         Debug::Debug(std::ofstream& file) : file(file) {
             this->file << std::unitbuf;

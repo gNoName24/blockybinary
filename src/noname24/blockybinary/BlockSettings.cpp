@@ -4,7 +4,7 @@
 #include <noname24/blockybinary.hpp>
 #include <noname24/blockybinary/inthelper.hpp>
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         size_t BlockSettings::parse(std::span<const uint8_t> ret, size_t offset,
                                     Debug* debug

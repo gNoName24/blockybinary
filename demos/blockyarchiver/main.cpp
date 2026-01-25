@@ -1,5 +1,5 @@
 #include <noname24/blockyarchiver.hpp>
-namespace BlockyArchiver = NoName24::BlockyArchiver;
+namespace BlockyArchiver = noname24::BlockyArchiver;
 
 #include <string> // std::string
 #include <iostream> // std::cout

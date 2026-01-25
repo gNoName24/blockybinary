@@ -7,7 +7,7 @@
 #include <sstream> // std::stringstream
 #include <iomanip> // std::setfill ; std::setw
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         namespace IntHelper {
             // uintN_to_hex

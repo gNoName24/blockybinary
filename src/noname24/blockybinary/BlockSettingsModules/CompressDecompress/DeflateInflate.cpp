@@ -7,7 +7,7 @@
 // Сторонние библиотеки
 #include <miniz/miniz.h> // https://github.com/richgel999/miniz
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         namespace BlockSettingsModules {
             namespace CompressDecompress {

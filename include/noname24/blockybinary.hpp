@@ -12,7 +12,7 @@
 #include <vector> // std::vector
 #include <unordered_map> // std::unordered_map
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         constexpr size_t XXH64_SIZE = 8;
         constexpr size_t XXH128_SIZE = 16;

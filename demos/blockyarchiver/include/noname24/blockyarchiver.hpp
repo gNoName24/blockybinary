@@ -5,12 +5,12 @@
 #define NONAME24_BLOCKYARCHIVER_HPP
 
 #include <noname24/blockybinary.hpp>
-namespace BlockyBinary = NoName24::BlockyBinary;
+namespace BlockyBinary = noname24::BlockyBinary;
 
 #include <filesystem> // std::filesystem
 #include <span> // std::span
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyArchiver {
         constexpr std::string standart_file_extension = ".barc";
 

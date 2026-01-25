@@ -4,7 +4,7 @@
 #include <noname24/blockybinary.hpp>
 #include <noname24/blockybinary/inthelper.hpp>
 
-namespace NoName24 {
+namespace noname24 {
     namespace BlockyBinary {
         void Block::add_block(Block block) {
             data_blocks.push_back(std::move(block));
