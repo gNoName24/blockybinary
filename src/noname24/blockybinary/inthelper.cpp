@@ -1,5 +1,5 @@
 /* ./src/noname24/blockybinary/inthelper.cpp
- * NoName24 - 2026
+ * noname24 - 2026
  */
 #include <noname24/blockybinary/inthelper.hpp>
 

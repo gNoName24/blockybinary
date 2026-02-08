@@ -1,6 +1,7 @@
 /* ./include/noname24/blockybinary.hpp
- * NoName24 - 2026
+ * noname24 - 2026
  */
+#pragma once
 #ifndef NONAME24_BLOCKYBINARY_HPP
 #define NONAME24_BLOCKYBINARY_HPP
 
@@ -45,7 +46,7 @@ namespace noname24 {
             // parse - out
             virtual size_t parse_begin_out(std::span<const uint8_t> ret, size_t offset,
                                            Debug* debug = nullptr
-            ) { return 0; } // out
+            ) { return 0; }
             virtual size_t parse_name_out(std::span<const uint8_t> ret, size_t offset,
                                           std::string& name,
                                           Debug* debug = nullptr
@@ -181,10 +182,9 @@ namespace noname24 {
         // -------------------
 
         struct BlockSettings {
-            // 1
             uint32_t block_number; // (АВТООПРЕДЕЛЯЕТСЯ)
 
-            // 3 - модули
+            // модули
             std::vector<std::unique_ptr<BlockSettingsModuleBase>> modules;
 
             size_t parse(std::span<const uint8_t> ret, size_t offset,
@@ -240,6 +240,7 @@ namespace noname24 {
 
             Block() {};
             Block(const BlockSettings& settings): settings(settings) {};
+            Block(const std::string& name): name(name) {};
             Block(const BlockSettings& settings, const std::string& name): settings(settings), name(name) {};
         };
 

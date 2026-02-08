@@ -1,6 +1,7 @@
 /* ./include/noname24/blockybinary/inthelper.hpp
- * NoName24 - 2026
+ * noname24 - 2026
  */
+#pragma once
 #ifndef NONAME24_BLOCKYBINARY_INTHELPER_HPP
 #define NONAME24_BLOCKYBINARY_INTHELPER_HPP
 

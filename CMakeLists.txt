@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # include(FetchContent)
 find_package(PkgConfig REQUIRED)
 
-option(NONAME24_BLOCKYBINARY_USE_TESTS "Enable tests" ON)
+option(NONAME24_BLOCKYBINARY_USE_TESTS "Enable tests" OFF)
 option(NONAME24_BLOCKYBINARY_USE_DEMOS "Enable demos" ON)
 
 function(blockybinary_message msg_type msg_text)
@@ -26,18 +26,17 @@ pkg_check_modules(libxxhash REQUIRED IMPORTED_TARGET libxxhash)
 blockybinary_message(STATUS "Miniz - https://github.com/richgel999/miniz - PkgConfig")
 pkg_check_modules(miniz REQUIRED IMPORTED_TARGET miniz)
 
-# Miniz (https://github.com/richgel999/miniz)
+# Crypto++ (https://github.com/weidai11/cryptopp)
 blockybinary_message(STATUS "Crypto++ - https://github.com/weidai11/cryptopp - find_library + find_path")
 find_library(CRYPTOPP_LIBRARY cryptopp REQUIRED)
 find_path(CRYPTOPP_INCLUDE_DIR cryptopp/cryptlib.h REQUIRED)
-
 add_library(CryptoPP::CryptoPP UNKNOWN IMPORTED)
 set_target_properties(CryptoPP::CryptoPP PROPERTIES
     IMPORTED_LOCATION "${CRYPTOPP_LIBRARY}"
     INTERFACE_INCLUDE_DIRECTORIES "${CRYPTOPP_INCLUDE_DIR}"
 )
 
-blockybinary_message(STATUS "Collecting all .cpp files into blockybinary_sources")
+blockybinary_message(STATUS "GLOB_RECURSE .cpp files into blockybinary_sources")
 file(GLOB_RECURSE blockybinary_sources "src/noname24/blockybinary/*.cpp")
 
 add_library(blockybinary
@@ -56,7 +55,7 @@ target_link_libraries(blockybinary PRIVATE
 # Макросы
 
 # Тесты
-if(USE_TESTS)
+if(NONAME24_BLOCKYBINARY_USE_TESTS)
     blockybinary_message(STATUS "Tests enable")
     enable_testing()
 
@@ -68,7 +67,6 @@ if(USE_TESTS)
 endif()
 
 # Примеры
-if(USE_DEMOS)
+if(NONAME24_BLOCKYBINARY_USE_DEMOS)
     blockybinary_message(STATUS "Demos enable")
-    add_subdirectory(demos/blockyarchiver)
 endif()

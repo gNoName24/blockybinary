@@ -1,5 +1,5 @@
 /* ./src/noname24/BlockSettingsModules/Security/Magic.cpp
- * NoName24 - 2026
+ * noname24 - 2026
  */
 #include <noname24/blockybinary.hpp>
 #include <noname24/blockybinary/inthelper.hpp>
